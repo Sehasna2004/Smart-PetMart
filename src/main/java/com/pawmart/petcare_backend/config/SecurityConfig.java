@@ -13,23 +13,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for development with React
+                .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://localhost:5173")); // React Frontend URL
+                    config.setAllowedOrigins(List.of("http://localhost:5173"));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(List.of("*"));
                     config.setAllowCredentials(true);
                     return config;
                 }))
                 .authorizeHttpRequests(auth -> auth
-                        // Permit all user-related endpoints (Register/Login)
                         .requestMatchers("/api/users/**").permitAll()
-
-                        // Permit all admin-related endpoints
                         .requestMatchers("/api/admin/**").permitAll()
+                        .requestMatchers("/api/pets/**").permitAll()
 
-                        // Any other request must be authenticated
+                        // CRITICAL: Allow the browser to load images from the /images/ path
+                        .requestMatchers("/images/**").permitAll()
+
                         .anyRequest().authenticated()
                 );
         return http.build();
