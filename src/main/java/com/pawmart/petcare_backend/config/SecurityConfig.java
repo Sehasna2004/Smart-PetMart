@@ -13,7 +13,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // Disabled for development
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(List.of("http://localhost:5173"));
@@ -27,6 +27,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").permitAll()
                         .requestMatchers("/api/pets/**").permitAll()
 
+                        // NEW: Permit the Inquiry API paths
+                        .requestMatchers("/api/inquiries/**").permitAll()
+
                         // CRITICAL: Allow the browser to load images from the /images/ path
                         .requestMatchers("/images/**").permitAll()
 
@@ -34,4 +37,6 @@ public class SecurityConfig {
                 );
         return http.build();
     }
+
+
 }
